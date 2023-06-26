@@ -1,0 +1,4 @@
+Place your Discord and CharacterAI tokens in this folder as 'discordToken.txt' and 'caiToken.txt' respectively.
+
+Just the token, nothing else, on the first line. Do not share your tokens with anyone else or bad things will happen.
+Bad things that I am in no way responsible for. You have been warned.
