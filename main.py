@@ -6,21 +6,28 @@ import argparse
 import random
 import logging
 import discord
-from typing import List
-from discord.ext import commands
+import asyncio
 from discord import app_commands
 from characterai import PyAsyncCAI
 
 parser = argparse.ArgumentParser(prog='PleaseHireMeBot', description="World's first combined Discord bot and CV", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('-v', '--verbose', action="store_true", help="enables verbose logging") 
-
 args = parser.parse_args() # Get entered arguments
-logOutput = logging.FileHandler(filename='debug.log', encoding='utf-8', mode='w')
 
 intents = discord.Intents.default() # Asking for default permissions on startup
 intents.message_content = True      # as well as the ability to look for message contents
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client) # Add all commands to command tree
+
+logOutput = logging.FileHandler(filename='debug.log', encoding='utf-8', mode='w')
+
+file1 = open(file="tokens/discordToken.txt", mode="r+", encoding="utf-8")
+discordToken = file1.read()
+file1.close() # Close the file after reading it
+
+file2 = open(file="tokens/caiToken.txt", mode="r+", encoding="utf-8")
+caiToken = file2.read()
+file2.close
 
 @client.event
 async def on_ready():
@@ -62,34 +69,46 @@ async def roll(interaction, dice: int = 1, sides: int = 6):
             f"You rolled `{dice}d{sides}` and got: `{total}`.\nResults: `{results_string}`"
         )
     
-@tree.command(name="flip", description="Flip a coin") #TODO: Fix text formatting bug when flipping more than 1 coin
-async def flip(interaction, times_to_flip: int = 1):
-    
-    results = []
-    
-    if times_to_flip > 10:
-        await interaction.response.send_message("You can't flip more than 10 coins at once!")
-        return
-    
-    if times_to_flip == 1:
-        await interaction.response.send_message("You flipped a coin and got: " + random.choice(["Heads", "Tails"]))
-    else:
-        for i in range(times_to_flip):
-            results.append(random.choice(["Heads", "Tails"]) + ",")
-        await interaction.response.send_message("You flipped `" + str(times_to_flip) + "` coins and got: " + "".join(results))
+@tree.command(name="flip", description="Flip a coin") #Feature reversion: you can only flip 1 coin at once, but I hope to eventually embed a nice little .gif for each flip later down the line
+async def flip(interaction):
+        await interaction.response.send_message("You flipped a coin and got: " + random.choice(["`Heads`", "`Tails`"]))
 
 @tree.command(name="attributions", description="Who made this lovely lad?")
 async def attributions(interaction):
     await interaction.response.send_message("**Made with malicious intent by Ashton Bennet**\nwith discord.py [https://github.com/Rapptz/discord.py/]\nand PyCAI [https://github.com/kramcat/CharacterAI]\n\n***You should hire me***\nhttps://www.linkedin.com/in/ashtonqlb/\nhttps://github.com/ashtonqlb")
             
-# @tree.command(name="hal", description="Talk to HAL9000")
+@tree.command(name="hal", description="Talk to HAL9000")
+async def hal(interaction, message: str):
+    async def hal_backend():
+        caiClient = PyAsyncCAI(caiToken)
+        char = "bXFRSGkcr0gP3-udUZNWk-JvOr7nfemTFQAfxjUSFjM"
+        chat = await caiClient.chat.get_chat(char)
+        history_id = chat['external_id']
+        participants = chat['participants']
+
+        if not participants[0]['is_human']:
+            tgt = participants[0]['user']['username']
+        else:
+            tgt = participants[1]['user']['username']
+
+        while True:
+            data = await caiClient.chat(char, message, history_external_id=history_id, tgt=tgt)
+
+            name = data['src_char']['participant']['name']
+            text = data['replies'][0]['text']
+
+            response = f"**{name}:**  {text}"
+            return response  # Return the response from hal_backend
+    
+    response = await asyncio.run(hal_backend())  # Store the response in a variable
+    await interaction.response.send_message(response)  # Send the response in the message
 
 # @tree.command(name="cow", description="GNU cowsay")
 
 # @tree.command(name="fortune", description="GNU fortune")
 
 @tree.command(name="fizzbuzz", description="Obligatory fizzbuzz")
-async def fizzbuzz(interaction, ceil: int):
+async def fizzbuzz(interaction, ceil: int = 100):
     result = []
     
     if ceil + 1 > 101:
@@ -107,9 +126,6 @@ async def fizzbuzz(interaction, ceil: int):
             result.append(str(i) + ", ")
     await interaction.response.send_message("".join(result))
 
-file1 = open(file="tokens/discordToken.txt", mode="r+", encoding="utf-8")
-discordToken = file1.read()
-file1.close() # Close the file after reading it
 
 if args.verbose:
     print("Verbose logging enabled")
