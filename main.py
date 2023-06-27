@@ -80,28 +80,32 @@ async def attributions(interaction):
 @tree.command(name="hal", description="Talk to HAL9000")
 async def hal(interaction, message: str):
     async def hal_backend():
-        caiClient = PyAsyncCAI(caiToken)
+        cai_client = PyAsyncCAI(caiToken)
+        await cai_client.start()
         char = "bXFRSGkcr0gP3-udUZNWk-JvOr7nfemTFQAfxjUSFjM"
-        chat = await caiClient.chat.get_chat(char)
+        chat = await cai_client.chat.get_chat(char)
         history_id = chat['external_id']
         participants = chat['participants']
-
         if not participants[0]['is_human']:
             tgt = participants[0]['user']['username']
         else:
             tgt = participants[1]['user']['username']
 
         while True:
-            data = await caiClient.chat(char, message, history_external_id=history_id, tgt=tgt)
-
+            print("in loop")
+            data = await cai_client.chat.send_message(char, message, history_external_id=history_id, tgt=tgt)
+            print("data got")
             name = data['src_char']['participant']['name']
             text = data['replies'][0]['text']
 
-            response = f"**{name}:**  {text}"
-            return response  # Return the response from hal_backend
-    
-    response = await asyncio.run(hal_backend())  # Store the response in a variable
-    await interaction.response.send_message(response)  # Send the response in the message
+            cai_response = f"**{name}:**  `{text}`"
+            await asyncio.sleep(5)
+            print(cai_response)
+            return cai_response  # Return the response from hal_backend
+
+    await interaction.response.defer()
+    response = await hal_backend()  # Store the response in a variable
+    await interaction.followup.send(response)
 
 # @tree.command(name="cow", description="GNU cowsay")
 
