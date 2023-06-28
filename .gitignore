@@ -1,3 +1,5 @@
 tokens/caiToken.txt
 tokens/discordToken.txt
 debug.log
+.vscode/
+bot-env/
