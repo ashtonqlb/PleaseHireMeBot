@@ -3,3 +3,4 @@ tokens/discordToken.txt
 debug.log
 .vscode/
 bot-env/
+extensions/__pycache__

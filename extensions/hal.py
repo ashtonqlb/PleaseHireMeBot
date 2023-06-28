@@ -2,7 +2,7 @@ import asyncio
 from interactions import slash_command, slash_option, OptionType, SlashContext, Extension
 from characterai import PyAsyncCAI
 
-file = open(file="tokens/caiToken.txt", mode="r+", encoding="utf-8")
+file = open(file="tokens/caiToken.txt", mode="r", encoding="utf-8")
 token = file.read()
 file.close()
 
