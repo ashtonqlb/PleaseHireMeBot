@@ -2,5 +2,5 @@ tokens/caiToken.txt
 tokens/discordToken.txt
 debug.log
 .vscode/
-bot-env/
 extensions/__pycache__
+extensions/todo.py
