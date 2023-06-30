@@ -2,9 +2,9 @@
 # Proudly made *without* code-enhancing substances (Copilot, Kite, etc.)
 # By Ashton Lunken
 
-#TODO: Fix /hat command. Getting the user's profile picture is quite a mystery to me
-#TODO: Fix memory leak in /hal command by ending the coroutine. I need to read the documentation to get a better understanding of how that works.
-#TODO: Fix /cow command. Subcommands don't show up for some reason and I'm not sure why
+# TODO: Fix /hat command. Getting the user's profile picture is quite a mystery to me
+# TODO: Fix memory leak in /hal command by ending the coroutine. I need to read the documentation to get a better understanding of how that works.
+# TODO: Fix /cow command. Subcommands don't show up for some reason and I'm not sure why
 
 import os
 import argparse
@@ -28,7 +28,7 @@ args = parser.parse_args()  # Get entered arguments
 logging.basicConfig(filename="debug.log", filemode="w")
 debug_log = logging.getLogger("PleaseHireMeBot")
 if args.silent is False:
-    if args.verbose:    
+    if args.verbose:
         debug_log.setLevel(logging.DEBUG)
     else:
         debug_log.setLevel(logging.INFO)
@@ -38,13 +38,14 @@ bot = Client(
     intents=Intents.DEFAULT,
     sync_interactions=True,
     asyncio_debug=True,
-    logger=debug_log
+    logger=debug_log,
 )
 
 
 @listen()
 async def on_ready():
     print(f"Ready!\nLogged in as {bot.user}")
+
 
 # @slash_command(name="cow", description="GNU cowsay")
 print("Loading extensions...")
