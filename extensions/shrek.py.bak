@@ -1,0 +1,11 @@
+import praw
+import random
+from interactions import slash_command, SlashContext, Extension
+
+class shrek(Extension):
+    reddit = praw.Reddit(
+        client_id="RR4oj-2OlA42au3AyfAspw",
+        client_secret="mPDXVt-LN8cz1stYa16jzEGpxYnZKg",
+        user_agent="",
+        subreddit_name="shrekmemes"
+    )

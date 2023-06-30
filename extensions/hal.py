@@ -18,19 +18,19 @@ class hal(Extension):
         async def hal_backend():
             cai_client = PyAsyncCAI(token)
             await cai_client.start()
-            char = "bXFRSGkcr0gP3-udUZNWk-JvOr7nfemTFQAfxjUSFjM"
+            
+            char = "bXFRSGkcr0gP3-udUZNWk-JvOr7nfemTFQAfxjUSFjM" # Establish connection to HAL9000
             chat = await cai_client.chat.get_chat(char)
             history_id = chat['external_id']
             participants = chat['participants']
+            
             if not participants[0]['is_human']:
                 tgt = participants[0]['user']['username']
             else:
                 tgt = participants[1]['user']['username']
 
             while True:
-                # print("in loop")
                 data = await cai_client.chat.send_message(char, message, history_external_id=history_id, tgt=tgt)
-                # print("data got")
                 name = data['src_char']['participant']['name']
                 text = data['replies'][0]['text']
 
@@ -38,8 +38,9 @@ class hal(Extension):
                 await asyncio.sleep(5)
                 print(cai_response)
                 return cai_response  # Return the response from hal_backend
-
+            
         await ctx.defer()
+        
         response = await hal_backend()  # Store the response in a variable
         await ctx.send(response)
     

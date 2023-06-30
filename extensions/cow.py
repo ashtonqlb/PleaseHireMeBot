@@ -58,3 +58,4 @@ class cow(Extension):
 
 def setup(bot):
     cow(bot)
+    
