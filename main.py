@@ -2,9 +2,7 @@
 # Proudly made *without* code-enhancing substances (Copilot, Kite, etc.)
 # By Ashton Lunken
 
-# TODO: Fix /hat command. Getting the user's profile picture is quite a mystery to me
 # TODO: Fix memory leak in /hal command by ending the coroutine. I need to read the documentation to get a better understanding of how that works.
-# TODO: Fix /cow command. Subcommands don't show up for some reason and I'm not sure why
 
 import os
 import argparse
