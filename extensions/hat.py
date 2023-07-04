@@ -1,7 +1,7 @@
 import os
 import requests
 import ffmpeg
-from interactions import slash_command, SlashContext, Extension
+from interactions import slash_command, SlashContext, Extension, File
 
 
 class hat(Extension):
@@ -13,18 +13,14 @@ class hat(Extension):
         
         open(og_filepath, "wb").write(avi.content)
         
-        def add_hat(filepath):
-            return (
-                ffmpeg
-                .input(filepath)
-                .overlay("extensions/assets/hat/hat.png", x=0, y=0)
-                .output(edit_filepath)
-                .run()
-            )
-            
-        add_hat(og_filepath)
-    
-        await ctx.send(ctx.author.avatar_url)
+        stream = ffmpeg.input(og_filepath)
+        overlay = ffmpeg.input("extensions/assets/hat/hat.gif")
+        
+        stream = ffmpeg.overlay(stream, overlay, x=-5, y=-5)
+        stream = ffmpeg.output(stream, edit_filepath)
+        ffmpeg.run(stream, overwrite_output=True)
+                        
+        await ctx.send(file=File(filename=edit_filepath, file_type="image/png"))
         os.remove(og_filepath)
         os.remove(edit_filepath)
 
